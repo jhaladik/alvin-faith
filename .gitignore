@@ -1,0 +1,73 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# PyTorch - Exclude all checkpoints by default
+*.pth
+*.pt
+
+# Keep only final/demo checkpoints (force-add with git add -f)
+!src/checkpoints/faith_fixed_20251120_162417_final_*.pth
+!src/checkpoints/faith_evolution_20251120_194555_best_*.pth
+
+# Jupyter Notebook
+.ipynb_checkpoints
+*.ipynb
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
+runs/  # TensorBoard logs
+
+# Environment
+venv/
+env/
+ENV/
+.env
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Temporary files
+*.tmp
+*.bak
+
+# Training logs and test results
+training_diversity_fix.log
+config_test_quick.log
+test_fixed_model_results.txt
+warehouse_fixed_test.txt
+old_vs_fixed_comparison.log
+TESTING_IN_PROGRESS.md
+COMPREHENSIVE_TEST_RESULTS.md

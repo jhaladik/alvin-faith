@@ -1,0 +1,18 @@
+# Context-Aware Foundation 2D Agent - Dependencies
+
+# Core ML framework
+torch>=1.9.0
+
+# Numerical computing
+numpy>=1.19.0
+
+# Visualization
+pygame>=2.0.0
+
+# Web demo (HuggingFace Spaces)
+gradio>=4.12.0
+pillow>=10.0.0
+
+# Optional: For advanced features
+# tensorboard>=2.8.0  # Training visualization (uncomment if needed)
+# matplotlib>=3.3.0   # Plotting (uncomment if needed)
