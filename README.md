@@ -46,10 +46,13 @@ pip install -r requirements.txt
 ### Test with Pre-trained Model
 
 ```bash
-# Run comprehensive test suite
+# Run comprehensive test suite (with faith analysis)
 python src/test_expanded_faith.py checkpoints/faith_fixed_20251120_162417_final_policy.pth --episodes 50
 
-# Visual demo with pygame
+# EXPANDED visual demo with pygame (180-dim observer, enhanced stats)
+python src/expanded_faith_visual_games.py checkpoints/faith_fixed_20251120_162417_final_policy.pth --speed 10
+
+# OR use base visual demo (92-dim observer)
 python src/faith_visual_games.py checkpoints/faith_fixed_20251120_162417_final_policy.pth --speed 10
 
 # Launch Gradio web demo
@@ -104,26 +107,27 @@ python src/train_snake_focused.py --episodes 500
 ```
 alvin-faith/
 ├── src/
-│   ├── train_expanded_faith_fixed.py      # PRIMARY: Fixed world model training
-│   ├── train_snake_focused.py             # Snake-only focused training
-│   ├── test_expanded_faith.py             # Comprehensive test suite
-│   ├── faith_visual_games.py              # Visual pygame demo
-│   ├── context_aware_agent.py             # Agent architecture
+│   ├── train_expanded_faith_fixed.py        # PRIMARY: Fixed world model training
+│   ├── train_snake_focused.py               # Snake-only focused training
+│   ├── test_expanded_faith.py               # Comprehensive test suite (34KB)
+│   ├── expanded_faith_visual_games.py       # EXPANDED visual demo (180-dim, 46KB)
+│   ├── faith_visual_games.py                # Base visual demo (92-dim, 35KB)
+│   ├── context_aware_agent.py               # Agent architecture
 │   └── core/
-│       ├── expanded_temporal_observer.py  # 180-dim observer
-│       ├── context_aware_world_model.py   # Fixed world model
-│       ├── faith_system.py                # Faith patterns & evolution
-│       ├── entity_discovery.py            # Entity classification
-│       ├── pattern_transfer.py            # Universal patterns
-│       ├── mechanic_detectors.py          # Hidden mechanic discovery
-│       ├── planning_test_games.py         # Snake, Pac-Man, Dungeon
+│       ├── expanded_temporal_observer.py    # 180-dim observer
+│       ├── context_aware_world_model.py     # Fixed world model
+│       ├── faith_system.py                  # Faith patterns & evolution
+│       ├── entity_discovery.py              # Entity classification
+│       ├── pattern_transfer.py              # Universal patterns
+│       ├── mechanic_detectors.py            # Hidden mechanic discovery
+│       ├── planning_test_games.py           # Snake, Pac-Man, Dungeon
 │       └── ... (other core modules)
 ├── checkpoints/
 │   ├── faith_fixed_20251120_162417_final_*.pth      # Production model
 │   └── faith_evolution_20251120_194555_best_*.pth   # Best performance
-├── gradio_demo.py                         # HuggingFace Spaces demo
-├── requirements.txt                       # Dependencies
-└── README.md                              # This file
+├── gradio_demo.py                           # HuggingFace Spaces demo
+├── requirements.txt                         # Dependencies
+└── README.md                                # This file
 ```
 
 ## 🔬 Key Innovations
@@ -195,18 +199,32 @@ python src/test_expanded_faith.py checkpoints/faith_fixed_20251120_162417_final_
 python src/test_expanded_faith.py checkpoints/faith_fixed_20251120_162417_final_policy.pth --analyze-faith
 ```
 
-### Visual Demo
-```bash
-# Launch pygame demo
-python src/faith_visual_games.py checkpoints/faith_fixed_20251120_162417_final_policy.pth --speed 10
+### Visual Demos
 
-# Controls:
-#   1 - Switch to Snake
-#   2 - Switch to Pac-Man
-#   3 - Switch to Dungeon
-#   SPACE - Toggle AI/Manual
-#   R - Reset game
-#   ESC - Quit
+Two pygame-based visual demos available:
+
+**EXPANDED Demo** (recommended - 180-dim observer):
+```bash
+python src/expanded_faith_visual_games.py checkpoints/faith_fixed_20251120_162417_final_policy.pth --speed 10
+```
+
+**Base Demo** (92-dim observer):
+```bash
+python src/faith_visual_games.py checkpoints/faith_fixed_20251120_162417_final_policy.pth --speed 10
+```
+
+**Controls:**
+- `1` - Switch to Snake
+- `2` - Switch to Pac-Man
+- `3` - Switch to Dungeon
+- `SPACE` - Toggle AI/Manual
+- `R` - Reset game
+- `ESC` - Quit
+
+**Visual Indicators:**
+- 🟣 Magenta agent = Faith action
+- 🔵 Cyan agent = Planning action
+- 🟡 Yellow agent = Reactive action
 ```
 
 ## 🌐 Web Demo
