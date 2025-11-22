@@ -37,6 +37,7 @@ game_state = {
     'deaths': 0,
     'human_playing': False,  # Toggle between AI and Human
     'manual_action': None,   # Store manual input action
+    'current_direction': 0,  # Current direction for continuous movement (0=Up, 1=Down, 2=Left, 3=Right)
 }
 
 # HTML template
@@ -244,7 +245,7 @@ HTML_TEMPLATE = """
                 🤖 AI Playing
             </button>
             <div class="mode-hint" id="mode-hint">
-                AI is playing automatically
+                AI is playing automatically (Press M to play yourself!)
             </div>
 
             <h2>Actions</h2>
@@ -309,7 +310,7 @@ HTML_TEMPLATE = """
                     if (data.human_playing) {
                         btn.className = 'action-button mode-toggle human';
                         btn.innerHTML = '👤 Human Playing';
-                        hint.textContent = 'Use arrow keys: ↑↓←→ to play';
+                        hint.textContent = 'Game keeps moving! Use ↑↓←→ to steer';
                     } else {
                         btn.className = 'action-button mode-toggle';
                         btn.innerHTML = '🤖 AI Playing';
@@ -652,12 +653,15 @@ class HeadlessGameRenderer:
 
         # Get action based on mode
         if game_state['human_playing']:
-            # Human mode - use manual input
-            action = game_state.get('manual_action', None)
-            if action is None:
-                return  # Wait for human input
-            # Clear the action after using it
-            game_state['manual_action'] = None
+            # Human mode - CONTINUOUS MOVEMENT (like classic arcade games!)
+            # Check if player changed direction
+            if game_state['manual_action'] is not None:
+                # Update current direction with new input
+                game_state['current_direction'] = game_state['manual_action']
+                game_state['manual_action'] = None
+
+            # Always move in current direction (keeps moving!)
+            action = game_state['current_direction']
         else:
             # AI mode - get action from agent
             # Use appropriate context for each game
