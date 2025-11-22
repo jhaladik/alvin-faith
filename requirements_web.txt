@@ -1,0 +1,20 @@
+# Web-based game streaming (NO VNC!)
+# CPU-only PyTorch
+
+# Use PyTorch CPU-only repo as extra source (avoids CUDA bloat)
+--extra-index-url https://download.pytorch.org/whl/cpu
+
+# Numerical computing
+numpy>=1.19.0
+
+# PyTorch CPU-only version
+torch>=2.0.0
+
+# Game engine
+pygame>=2.0.0
+
+# Web server for streaming
+flask>=2.3.0
+
+# Image processing
+pillow>=10.0.0

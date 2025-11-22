@@ -1,0 +1,13 @@
+version: '3.8'
+
+services:
+  snake-game:
+    build: .
+    ports:
+      - "7860:7860"  # noVNC web interface
+    environment:
+      - DISPLAY=:99
+    volumes:
+      - ./checkpoints:/app/checkpoints:ro  # Mount checkpoints as read-only
+    stdin_open: true
+    tty: true

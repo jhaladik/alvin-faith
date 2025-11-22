@@ -1,0 +1,29 @@
+FROM python:3.10-slim
+
+# Install minimal system dependencies (NO VNC!)
+RUN apt-get update && apt-get install -y \
+    python3-pygame \
+    libsdl2-2.0-0 \
+    libsdl2-image-2.0-0 \
+    libsdl2-mixer-2.0-0 \
+    libsdl2-ttf-2.0-0 \
+    && rm -rf /var/lib/apt/lists/*
+
+# Set working directory
+WORKDIR /app
+
+# Copy requirements and install Python dependencies
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Copy all application files
+COPY . .
+
+# Expose port for web interface
+EXPOSE 7860
+
+# Set SDL to use dummy video driver (headless)
+ENV SDL_VIDEODRIVER=dummy
+
+# Run the web game streamer
+CMD ["python", "web_game_streamer.py"]
