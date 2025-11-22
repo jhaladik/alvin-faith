@@ -73,6 +73,10 @@ class ZeroShotPacManTest:
         self.total_deaths = 0
         self.best_score = 0
 
+        # Human play mode
+        self.human_playing = False
+        self.current_direction = 0  # Default: UP
+
         # Reset game
         self.state = self.game.reset()
         self.observer.reset()
@@ -89,7 +93,9 @@ class ZeroShotPacManTest:
         print("  PacMan needs: Avoid walls, avoid ghosts, collect pellets")
         print()
         print("CONTROLS:")
-        print("  UP/DOWN - Increase/Decrease ghost difficulty")
+        print("  M - Toggle AI/Human mode")
+        print("  ARROW KEYS - Steer (in human mode)")
+        print("  UP/DOWN - Increase/Decrease difficulty (in AI mode)")
         print("  R - Reset episode")
         print("  SPACE - Pause/Resume")
         print("  ESC - Quit")
@@ -143,6 +149,13 @@ class ZeroShotPacManTest:
         title = self.title_font.render("ZERO-SHOT TRANSFER", True, CYAN)
         self.screen.blit(title, (panel_x, y))
         y += 30
+
+        # Mode info
+        mode_color = ORANGE if self.human_playing else GREEN
+        mode_text = "HUMAN PLAYING" if self.human_playing else "AI PLAYING"
+        mode_render = self.font.render(f"Mode: {mode_text}", True, mode_color)
+        self.screen.blit(mode_render, (panel_x, y))
+        y += 25
 
         # Agent info
         agent_text = self.font.render("Agent: SNAKE (no PacMan training!)", True, GRAY)
@@ -246,22 +259,42 @@ class ZeroShotPacManTest:
                     elif event.key == pygame.K_r:
                         self.reset_episode()
                         print("RESET!")
-                    elif event.key == pygame.K_UP:
-                        self.change_ghost_level(1)
-                    elif event.key == pygame.K_DOWN:
-                        self.change_ghost_level(-1)
+                    elif event.key == pygame.K_m:
+                        # Toggle mode
+                        self.human_playing = not self.human_playing
+                        mode_str = "HUMAN" if self.human_playing else "AI"
+                        print(f"\nMode switched to: {mode_str}")
+                    elif self.human_playing:
+                        # Human mode - arrow keys change direction
+                        if event.key == pygame.K_UP:
+                            self.current_direction = 0
+                        elif event.key == pygame.K_DOWN:
+                            self.current_direction = 1
+                        elif event.key == pygame.K_LEFT:
+                            self.current_direction = 2
+                        elif event.key == pygame.K_RIGHT:
+                            self.current_direction = 3
+                    else:
+                        # AI mode - arrow keys change difficulty
+                        if event.key == pygame.K_UP:
+                            self.change_ghost_level(1)
+                        elif event.key == pygame.K_DOWN:
+                            self.change_ghost_level(-1)
 
-            # AI step (if not paused)
+            # Game step (if not paused)
             if not paused and not self.done:
                 # Get observation (using SNAKE observer!)
                 obs = self.observer.observe(self.state)
 
-                # Use 'balanced' context (not 'snake' - more general)
-                context = torch.tensor([0.0, 1.0, 0.0], dtype=torch.float32)
-                obs_with_context = add_context_to_observation(obs, context)
-
-                # Get action from SNAKE agent
-                action = self.agent.get_action(obs_with_context, epsilon=0.0)
+                # Get action based on mode
+                if self.human_playing:
+                    # Human mode - continuous movement
+                    action = self.current_direction
+                else:
+                    # AI mode
+                    context = torch.tensor([0.0, 1.0, 0.0], dtype=torch.float32)
+                    obs_with_context = add_context_to_observation(obs, context)
+                    action = self.agent.get_action(obs_with_context, epsilon=0.0)
 
                 # Step game
                 self.state, reward, self.done = self.game.step(action)
