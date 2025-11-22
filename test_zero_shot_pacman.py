@@ -48,6 +48,7 @@ GRAY = (128, 128, 128)
 GREEN = (0, 255, 0)
 ORANGE = (255, 165, 0)
 YELLOW = (255, 255, 0)
+RED = (255, 0, 0)  # For UI elements
 
 class ZeroShotPacManTest:
     def __init__(self, model_path, ghost_level=0, cell_size=25):
@@ -98,7 +99,7 @@ class ZeroShotPacManTest:
         self.done = False
 
         print("=" * 70)
-        print("ZERO-SHOT TRANSFER TEST: Snake Agent → PacMan")
+        print("ZERO-SHOT TRANSFER TEST: Snake Agent -> PacMan")
         print("=" * 70)
         print(f"Loaded SNAKE checkpoint: {model_path}")
         print(f"Testing on: PacMan with {len(self.game.ghosts)} ghosts (level {ghost_level})")
@@ -369,10 +370,10 @@ class ZeroShotPacManTest:
         print()
         print("CONCLUSION:")
         if self.episodes_completed > 0 and self.total_victories > 0:
-            print("  ✓ Snake agent CAN play PacMan without training!")
-            print("  ✓ Spatial reasoning transfers across games!")
+            print("  [SUCCESS] Snake agent CAN play PacMan without training!")
+            print("  [SUCCESS] Spatial reasoning transfers across games!")
         else:
-            print("  ✗ Transfer unsuccessful - needs game-specific training")
+            print("  [FAILED] Transfer unsuccessful - needs game-specific training")
         print("=" * 70)
 
         pygame.quit()
