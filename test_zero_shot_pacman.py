@@ -22,17 +22,32 @@ from src.core.simple_pacman_game import SimplePacManGame
 from src.context_aware_agent import ContextAwareDQN, add_context_to_observation
 from src.core.expanded_temporal_observer import ExpandedTemporalObserver
 
-# Colors
-BLACK = (0, 0, 0)
+# ATARI SEA THEME COLOR PALETTE
+# Ocean & Environment
+OCEAN_DARK = (0, 50, 100)        # Deep blue ocean
+OCEAN_LIGHT = (0, 100, 180)      # Light blue waves
+ISLAND_GREEN = (34, 139, 34)     # Green islands
+ISLAND_SAND = (210, 180, 140)    # Beach/sand
+
+# Player & Collectibles
+SHIP_HULL = (200, 200, 200)      # Gray ship
+SHIP_ACCENT = (255, 215, 0)      # Gold trim
+TREASURE_GOLD = (255, 215, 0)    # Gold treasure
+TREASURE_GLOW = (255, 255, 150)  # Glow effect
+
+# Enemies & Hazards
+ENEMY_HULL = (100, 0, 0)         # Dark red enemy ship
+ENEMY_ACCENT = (150, 0, 0)       # Red accent
+MINE_BODY = (50, 50, 50)         # Dark mine
+MINE_SPIKES = (255, 0, 0)        # Red spikes
+
+# UI Colors
 WHITE = (255, 255, 255)
-YELLOW = (255, 255, 0)
-RED = (255, 0, 0)
-BLUE = (0, 0, 255)
 CYAN = (0, 255, 255)
 GRAY = (128, 128, 128)
 GREEN = (0, 255, 0)
-PINK = (255, 192, 203)
 ORANGE = (255, 165, 0)
+YELLOW = (255, 255, 0)
 
 class ZeroShotPacManTest:
     def __init__(self, model_path, ghost_level=0, cell_size=25):
@@ -103,43 +118,65 @@ class ZeroShotPacManTest:
 
     def draw_game(self):
         """Draw the game state"""
-        self.screen.fill(BLACK)
+        # Ocean background (Atari style)
+        self.screen.fill(OCEAN_DARK)
 
-        # Draw walls (maze)
+        # Draw animated ocean pattern (simple checkerboard for waves)
+        for x in range(0, self.grid_size):
+            for y in range(0, self.grid_size):
+                if (x + y) % 2 == 0:
+                    pygame.draw.rect(self.screen, OCEAN_LIGHT,
+                                   (x * self.cell_size, y * self.cell_size,
+                                    self.cell_size, self.cell_size), 0)
+
+        # Draw islands (walls = islands)
         for wx, wy in self.game.walls:
-            pygame.draw.rect(self.screen, BLUE,
+            # Island with sand border
+            pygame.draw.rect(self.screen, ISLAND_GREEN,
                            (wx * self.cell_size, wy * self.cell_size,
                             self.cell_size, self.cell_size))
+            # Sand border (Atari style)
+            pygame.draw.rect(self.screen, ISLAND_SAND,
+                           (wx * self.cell_size, wy * self.cell_size,
+                            self.cell_size, self.cell_size), 2)
 
-        # Draw pellets
+        # Draw treasures (pellets = gold treasures)
         for px, py in self.game.pellets:
-            pygame.draw.circle(self.screen, WHITE,
+            # Gold treasure with glow
+            pygame.draw.circle(self.screen, TREASURE_GLOW,
+                             (int((px + 0.5) * self.cell_size),
+                              int((py + 0.5) * self.cell_size)), 5)
+            pygame.draw.circle(self.screen, TREASURE_GOLD,
                              (int((px + 0.5) * self.cell_size),
                               int((py + 0.5) * self.cell_size)), 3)
 
-        # Draw ghosts (different colors for each)
-        ghost_colors = [RED, PINK, ORANGE]
+        # Draw enemy ships (ghosts = enemy ships)
         for i, ghost in enumerate(self.game.ghosts):
             gx, gy = ghost['pos']
-            color = ghost_colors[i % len(ghost_colors)]
-            pygame.draw.circle(self.screen, color,
+
+            # Enemy ship hull (red)
+            pygame.draw.circle(self.screen, ENEMY_HULL,
                              (int((gx + 0.5) * self.cell_size),
                               int((gy + 0.5) * self.cell_size)),
                              int(self.cell_size * 0.4))
-            # Draw eyes
-            pygame.draw.circle(self.screen, WHITE,
-                             (int((gx + 0.3) * self.cell_size),
-                              int((gy + 0.4) * self.cell_size)), 2)
-            pygame.draw.circle(self.screen, WHITE,
-                             (int((gx + 0.7) * self.cell_size),
-                              int((gy + 0.4) * self.cell_size)), 2)
+            # Ship accent
+            pygame.draw.circle(self.screen, ENEMY_ACCENT,
+                             (int((gx + 0.5) * self.cell_size),
+                              int((gy + 0.5) * self.cell_size)),
+                             int(self.cell_size * 0.2))
 
-        # Draw PacMan
+        # Draw your ship (PacMan = player ship)
         pmx, pmy = self.game.pacman_pos
-        pygame.draw.circle(self.screen, YELLOW,
+        # Ship hull
+        pygame.draw.circle(self.screen, SHIP_HULL,
                          (int((pmx + 0.5) * self.cell_size),
                           int((pmy + 0.5) * self.cell_size)),
                          int(self.cell_size * 0.45))
+        # Gold trim/accent
+        pygame.draw.circle(self.screen, SHIP_ACCENT,
+                         (int((pmx + 0.5) * self.cell_size),
+                          int((pmy + 0.5) * self.cell_size)),
+                         int(self.cell_size * 0.25))
 
         # Draw info panel
         panel_x = self.grid_size * self.cell_size + 20
